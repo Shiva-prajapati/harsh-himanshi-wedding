@@ -1,0 +1,8 @@
+/* Google Fonts imported in index.html, with fallbacks here */
+:root {
+  --font-royal: 'Cinzel Decorative', Georgia, 'Times New Roman', serif;
+  --font-body: 'Cormorant Garamond', Garamond, 'Georgia', serif;
+  --font-hindi: 'Noto Sans Devanagari', 'Mangal', sans-serif;
+  --font-script: 'Dancing Script', cursive;
+  --font-ui: 'Montserrat', system-ui, -apple-system, sans-serif;
+}
