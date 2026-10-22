@@ -117,31 +117,34 @@ export function App() {
     goToScene(currentScene - 1);
   }, [currentScene, goToScene]);
 
-  // ── Audio: attempt playback immediately on mount, show prompt if blocked by browser policy ──
-  const audioStarted = useRef(false);
+  // ── Audio: synchronized playback engine with browser autoplay handling ──
   useEffect(() => {
-    if (audioStarted.current) return;
-    audioStarted.current = true;
+    // Keep React state in sync with audio element
+    const unsubscribe = royalAudio.subscribe((playing) => {
+      setIsAudioPlaying(playing);
+      if (playing) {
+        setShowMusicNudge(false);
+      }
+    });
+
+    // Attempt autoplay immediately on mount
     (async () => {
       const ok = await royalAudio.tryAutoplay();
-      setIsAudioPlaying(ok);
       if (!ok) {
         setShowMusicNudge(true);
       }
     })();
+
+    return () => unsubscribe();
   }, []);
 
   const enableAudio = useCallback(async () => {
     setShowMusicNudge(false);
-    if (!royalAudio.getIsPlaying()) {
-      await royalAudio.start();
-      setIsAudioPlaying(true);
-    }
+    await royalAudio.start();
   }, []);
 
   const toggleAudio = useCallback(() => {
-    const playing = royalAudio.toggle();
-    setIsAudioPlaying(playing);
+    royalAudio.toggle();
   }, []);
 
   // ── Keyboard shortcuts ──
@@ -169,7 +172,7 @@ export function App() {
     tx.current = e.touches[0].clientX;
     ty.current = e.touches[0].clientY;
     // Any user touch unlocks audio if still blocked by browser policy
-    if (!audioStarted.current || !royalAudio.getIsPlaying()) {
+    if (!royalAudio.getIsPlaying()) {
       enableAudio();
     }
   }, [enableAudio]);
@@ -331,9 +334,13 @@ export function App() {
       />
 
       {/* ── Minimal One-Tap Action to Enable Wedding Music (if autoplay blocked by mobile browser) ── */}
-      {showMusicNudge && (
+      {showMusicNudge && !isAudioPlaying && (
         <div
           onClick={(e) => {
+            e.stopPropagation();
+            enableAudio();
+          }}
+          onTouchStart={(e) => {
             e.stopPropagation();
             enableAudio();
           }}

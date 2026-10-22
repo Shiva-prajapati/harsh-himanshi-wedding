@@ -17,9 +17,14 @@ export const FallbackInvitation: React.FC<FallbackInvitationProps> = ({
   const [blessingSubmitted, setBlessingSubmitted] = useState<boolean>(false);
   const [isAudioPlaying, setIsAudioPlaying] = useState<boolean>(false);
 
+  React.useEffect(() => {
+    return royalAudio.subscribe((playing) => {
+      setIsAudioPlaying(playing);
+    });
+  }, []);
+
   const toggleAudio = () => {
-    const playing = royalAudio.toggle();
-    setIsAudioPlaying(playing);
+    royalAudio.toggle();
   };
 
   const handleSendBlessings = (e: React.FormEvent) => {

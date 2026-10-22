@@ -24,7 +24,7 @@
     <script>
       // Automatic cache-buster for mobile browsers & in-app webviews
       (function() {
-        var APP_VERSION = '20261022-v5';
+        var APP_VERSION = '20261022-v7';
         try {
           var url = new URL(window.location.href);
           if (url.searchParams.get('v') !== APP_VERSION) {
@@ -35,9 +35,9 @@
       })();
     </script>
 
-    <!-- Preload royal invitation card image & background music -->
+    <!-- Preload royal invitation card image -->
+    <link rel="preload" as="image" href="%BASE_URL%images/wedding-invitation-card.jpg" />
     <link rel="preload" as="image" href="/harsh-himanshi-wedding/images/wedding-invitation-card.jpg" />
-    <link rel="preload" as="fetch" href="/harsh-himanshi-wedding/audio/Gallan-Do-from-50-seconds.mp3" crossorigin="anonymous" />
 
     <meta property="og:type" content="website" />
 
@@ -58,6 +58,35 @@
     </style>
   </head>
   <body>
+    <!-- Persistent Background Music: Gallan Do (from 00:50) -->
+    <audio
+      id="wedding-audio"
+      preload="auto"
+      loop
+      playsinline
+      webkit-playsinline
+      style="display:none;"
+    >
+      <source src="%BASE_URL%audio/Gallan-Do-from-50-seconds.mp3" type="audio/mpeg" />
+      <source src="/harsh-himanshi-wedding/audio/Gallan-Do-from-50-seconds.mp3" type="audio/mpeg" />
+    </audio>
+
+    <script>
+      // Immediate user interaction unlocker for iOS Safari & Android Chrome
+      (function() {
+        function unlockAudio() {
+          var a = document.getElementById('wedding-audio');
+          if (a && a.paused) {
+            a.volume = 0.55;
+            a.play().catch(function() {});
+          }
+        }
+        ['touchstart', 'touchend', 'click', 'pointerdown'].forEach(function(evt) {
+          window.addEventListener(evt, unlockAudio, { once: true, passive: true });
+        });
+      })();
+    </script>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
