@@ -17,6 +17,7 @@ interface NavigationProps {
   onToggleAudio?: () => void;
   onToggleFallback?: () => void;
   is3DMode?: boolean;
+  isPageTurning?: boolean;
 }
 
 /**
@@ -36,6 +37,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   onNext,
   onPause,
   onResume,
+  isPageTurning = false,
 }) => {
   return (
     <nav
@@ -76,7 +78,7 @@ export const Navigation: React.FC<NavigationProps> = ({
         <button
           type="button"
           onClick={onPrev}
-          disabled={currentScene === 0}
+          disabled={isPageTurning || currentScene === 0}
           aria-label="Previous scene"
           title="Previous Scene"
           style={{
@@ -85,13 +87,14 @@ export const Navigation: React.FC<NavigationProps> = ({
             borderRadius: '50%',
             border: '1px solid rgba(212, 175, 101, 0.35)',
             background: 'rgba(87, 13, 32, 0.6)',
-            color: currentScene === 0 ? 'rgba(242, 220, 168, 0.3)' : '#F2DCA8',
-            cursor: currentScene === 0 ? 'not-allowed' : 'pointer',
+            color: (isPageTurning || currentScene === 0) ? 'rgba(242, 220, 168, 0.3)' : '#F2DCA8',
+            cursor: (isPageTurning || currentScene === 0) ? 'not-allowed' : 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             transition: 'all 0.2s ease',
             padding: 0,
+            opacity: isPageTurning ? 0.6 : 1,
           }}
         >
           <ChevronLeft size={24} />
@@ -132,7 +135,7 @@ export const Navigation: React.FC<NavigationProps> = ({
         <button
           type="button"
           onClick={onNext}
-          disabled={currentScene === totalScenes - 1}
+          disabled={isPageTurning || currentScene === totalScenes - 1}
           aria-label="Next scene"
           title="Next Scene"
           style={{
@@ -141,13 +144,14 @@ export const Navigation: React.FC<NavigationProps> = ({
             borderRadius: '50%',
             border: '1px solid rgba(212, 175, 101, 0.35)',
             background: 'rgba(87, 13, 32, 0.6)',
-            color: currentScene === totalScenes - 1 ? 'rgba(242, 220, 168, 0.3)' : '#F2DCA8',
-            cursor: currentScene === totalScenes - 1 ? 'not-allowed' : 'pointer',
+            color: (isPageTurning || currentScene === totalScenes - 1) ? 'rgba(242, 220, 168, 0.3)' : '#F2DCA8',
+            cursor: (isPageTurning || currentScene === totalScenes - 1) ? 'not-allowed' : 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             transition: 'all 0.2s ease',
             padding: 0,
+            opacity: isPageTurning ? 0.6 : 1,
           }}
         >
           <ChevronRight size={24} />

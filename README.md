@@ -18,11 +18,9 @@ An ultra-premium, interactive 3D Indian royal wedding invitation website built w
   - Complete ancestral lineage and parents' blessings.
   - Central sacred knot medallion connecting the frames.
 - **Scene 4: Auspicious Celebrations & Programme**
-  - Fanned out 3D ivory slabs for all 4 wedding ceremonies:
-    1. 🎵 **Ladies Sangeet** — Tuesday, 18 Nov 2026 (8:00 PM)
-    2. 🕍 **Mandap & Ghurchari** — Wednesday, 19 Nov 2026 (Mandap 10:00 AM, Lunch 12:00 Noon, Ghurchari 9:00 PM)
-    3. 💍 **Departure of Barat** — Thursday, 20 Nov 2026 (5:00 PM from Sadholi Kadeem)
-    4. 🎊 **Wedding Reception** — Thursday, 20 Nov 2026 (Shiva Banquet Hall, Saharanpur)
+  - 3D ivory slabs for the confirmed wedding ceremonies:
+    1. 🕍 **Mandap & Home Ceremony** — Thursday, 19 Nov 2026 (At Home, Vill. Sadholi Kadeem: Mandap 10:00 AM, Lunch 12:00 Noon, Ghurchari 9:00 PM)
+    2. 💍 **Wedding & Baraat** — Friday, 20 Nov 2026 (Barat departs at 5:00 PM from Sadholi Kadeem to Shiva Banquet Hall, Shakumbhari Vihar, Saharanpur for Varmala, Pheras & Reception Feast)
 - **Scene 5: Venue & RSVP**
   - Night sky starfield with majestic palace silhouette backdrop.
   - Three interactive CTA actions:

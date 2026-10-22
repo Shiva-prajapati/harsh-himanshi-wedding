@@ -516,18 +516,18 @@ export const Scene1Overlay: React.FC<Scene1OverlayProps> = ({
                 letterSpacing: '0.06em',
               }}
             >
-              Tuesday, 18 – Thursday, 20 November 2026
+              Thursday, 19 – Friday, 20 November 2026
             </span>
             <span
               style={{
                 fontFamily: 'var(--font-ui)',
                 fontSize: 'clamp(0.72rem, 2vw, 0.82rem)',
                 color: '#D4AF65',
-                letterSpacing: '0.12em',
+                letterSpacing: '0.1em',
                 textTransform: 'uppercase',
               }}
             >
-              Shiva Banquet Hall • Saharanpur
+              19 Nov: Home, Sadholi Kadeem • 20 Nov: Shiva Banquet Hall
             </span>
           </div>
         </div>

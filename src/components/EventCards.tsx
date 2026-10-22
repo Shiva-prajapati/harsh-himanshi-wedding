@@ -13,20 +13,24 @@ export const EventCards: React.FC<EventCardsProps> = ({ reducedMotion = false })
   const refs = useRef<(THREE.Group | null)[]>([]);
 
   useEffect(() => {
+    const count = WEDDING_DATA.events.length;
+    const centerOffset = (count - 1) / 2;
+    const spacing = count <= 2 ? 2.2 : 1.6;
+
     if (reducedMotion) {
       refs.current.forEach((r, i) => {
         if (!r) return;
-        r.position.set((i - 1.5) * 1.6, 0, i * 0.08);
-        r.rotation.set(0, 0, (i - 1.5) * -0.05);
+        r.position.set((i - centerOffset) * spacing, 0, i * 0.08);
+        r.rotation.set(0, 0, (i - centerOffset) * -0.05);
       });
       return;
     }
     const tl = gsap.timeline();
     refs.current.forEach((r, i) => {
       if (!r) return;
-      const xTarget = (i - 1.5) * 1.6;
+      const xTarget = (i - centerOffset) * spacing;
       r.position.set(xTarget, -5.5, -1);
-      r.rotation.set(0.4, 0, (i - 1.5) * -0.06);
+      r.rotation.set(0.4, 0, (i - centerOffset) * -0.06);
       r.scale.set(0.65, 0.65, 0.65);
       tl.to(
         r.position,
@@ -35,7 +39,7 @@ export const EventCards: React.FC<EventCardsProps> = ({ reducedMotion = false })
       )
         .to(
           r.rotation,
-          { x: 0, z: (i - 1.5) * -0.06, duration: 1.3, ease: 'power2.out' },
+          { x: 0, z: (i - centerOffset) * -0.06, duration: 1.3, ease: 'power2.out' },
           i * 0.12
         )
         .to(
@@ -286,30 +290,56 @@ export const Scene4Overlay: React.FC<Scene4OverlayProps> = ({
                 </p>
               )}
 
-              {/* Date */}
-              <div
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '4px 12px',
-                  borderRadius: '8px',
-                  background: 'rgba(0,0,0,0.3)',
-                  border: '1px solid rgba(212,175,101,0.25)',
-                  marginBottom: '12px',
-                }}
-              >
-                <span style={{ color: '#D4AF65', fontSize: '14px' }}>📅</span>
-                <span
+              {/* Date & Location Highlight Badge */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center', marginBottom: '12px' }}>
+                <div
                   style={{
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: 'clamp(0.92rem, 2.8vw, 1.05rem)',
-                    color: '#FFF5E6',
-                    fontWeight: 600,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '4px 12px',
+                    borderRadius: '8px',
+                    background: 'rgba(0,0,0,0.3)',
+                    border: '1px solid rgba(212,175,101,0.25)',
                   }}
                 >
-                  {evt.date}
-                </span>
+                  <span style={{ color: '#D4AF65', fontSize: '14px' }}>📅</span>
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-ui)',
+                      fontSize: 'clamp(0.92rem, 2.8vw, 1.05rem)',
+                      color: '#FFF5E6',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {evt.day}, {evt.date}
+                  </span>
+                </div>
+
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '4px 12px',
+                    borderRadius: '8px',
+                    background: evt.id === 'mandap' ? 'rgba(87,13,32,0.6)' : 'rgba(120,27,50,0.6)',
+                    border: '1.5px solid rgba(242,220,168,0.45)',
+                  }}
+                >
+                  <span style={{ fontSize: '13px' }}>{evt.id === 'mandap' ? '🏡' : '🏛️'}</span>
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-ui)',
+                      fontSize: 'clamp(0.82rem, 2.4vw, 0.92rem)',
+                      color: '#F2DCA8',
+                      fontWeight: 700,
+                      letterSpacing: '0.04em',
+                    }}
+                  >
+                    {evt.id === 'mandap' ? 'Home Ceremony • Sadholi Kadeem' : 'Wedding Venue • Shiva Banquet Hall'}
+                  </span>
+                </div>
               </div>
 
               {/* Time & Venue Section */}

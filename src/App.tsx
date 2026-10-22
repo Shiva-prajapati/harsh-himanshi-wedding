@@ -29,6 +29,16 @@ export function App() {
   const [isAudioPlaying, setIsAudioPlaying]       = useState(false);
   const [showMusicNudge, setShowMusicNudge]       = useState(false);
 
+  // ── 3D Book Page Turn State ──
+  const [activeScene, setActiveScene] = useState(0);
+  const [pageTurn, setPageTurn] = useState<{
+    outgoing: number;
+    incoming: number;
+    direction: 'next' | 'prev';
+  } | null>(null);
+  const isTurningRef = useRef(false);
+  const turnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const reducedMotion = useReducedMotion();
   const deviceTier    = useDeviceTier();
 
@@ -38,6 +48,9 @@ export function App() {
   const handleReplay         = useCallback(() => {
     setIsPalaceDoorOpen(false);
     setAreGatesFullyOpen(false);
+    setActiveScene(0);
+    setPageTurn(null);
+    isTurningRef.current = false;
   }, []);
 
   // ── Master auto-play timeline ──
@@ -48,6 +61,61 @@ export function App() {
       onPalaceDoorOpen: openPalaceDoor,
       onReplay: handleReplay,
     });
+
+  // ── Book Page Turn Synchronization ──
+  useEffect(() => {
+    if (currentScene === activeScene) return;
+
+    const direction: 'next' | 'prev' = currentScene > activeScene ? 'next' : 'prev';
+    isTurningRef.current = true;
+    setPageTurn({
+      outgoing: activeScene,
+      incoming: currentScene,
+      direction,
+    });
+
+    // Elegant high chime upon turning book page
+    try {
+      royalAudio.playChime(direction === 'next' ? 1046.5 : 880);
+    } catch {
+      // Audio fallback
+    }
+
+    if (turnTimerRef.current) {
+      clearTimeout(turnTimerRef.current);
+    }
+
+    turnTimerRef.current = setTimeout(() => {
+      setActiveScene(currentScene);
+      setPageTurn(null);
+      isTurningRef.current = false;
+      turnTimerRef.current = null;
+    }, 680);
+  }, [currentScene, activeScene]);
+
+  useEffect(() => {
+    return () => {
+      if (turnTimerRef.current) {
+        clearTimeout(turnTimerRef.current);
+      }
+    };
+  }, []);
+
+  // ── Protected Navigation Handlers (Guards Against Rapid Spam Clicking) ──
+  const handleNext = useCallback(() => {
+    if (isTurningRef.current) return;
+    if (currentScene >= 4) return;
+    if (currentScene === 0 && !isPalaceDoorOpen) {
+      openPalaceDoor();
+    }
+    goToScene(currentScene + 1);
+  }, [currentScene, isPalaceDoorOpen, openPalaceDoor, goToScene]);
+
+  const handlePrev = useCallback(() => {
+    if (isTurningRef.current) return;
+    if (currentScene <= 0) return;
+    goToScene(currentScene - 1);
+  }, [currentScene, goToScene]);
 
   // ── Audio: attempt playback immediately on mount, show prompt if blocked by browser policy ──
   const audioStarted = useRef(false);
@@ -74,8 +142,9 @@ export function App() {
   // ── Keyboard shortcuts ──
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') goToScene(currentScene + 1);
-      else if (e.key === 'ArrowLeft') goToScene(Math.max(0, currentScene - 1));
+      if (isTurningRef.current) return;
+      if (e.key === 'ArrowRight') handleNext();
+      else if (e.key === 'ArrowLeft') handlePrev();
       else if (e.key === ' ') {
         e.preventDefault();
         isPlaying ? pause() : resume();
@@ -85,7 +154,7 @@ export function App() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [currentScene, isPlaying, pause, resume, goToScene, replay]);
+  }, [handleNext, handlePrev, isPlaying, pause, resume, replay]);
 
   // ── Touch swipe navigation (active on scenes 0, 1, 2; disabled during scroll on 3 & 4) ──
   const tx = useRef<number | null>(null);
@@ -102,6 +171,11 @@ export function App() {
 
   const onTouchEnd = useCallback((e: React.TouchEvent) => {
     if (tx.current === null || ty.current === null) return;
+    if (isTurningRef.current) {
+      tx.current = null;
+      ty.current = null;
+      return;
+    }
     // Do not trigger horizontal swipe on scrolling scenes 3 (Events) or 4 (Venue/RSVP)
     if (currentScene === 3 || currentScene === 4) {
       tx.current = null;
@@ -112,15 +186,14 @@ export function App() {
     const dy = ty.current - e.changedTouches[0].clientY;
     if (Math.abs(dx) > Math.abs(dy) * 1.5 && Math.abs(dx) > 48) {
       if (dx > 0) {
-        if (currentScene === 0 && !isPalaceDoorOpen) openPalaceDoor();
-        else goToScene(currentScene + 1);
+        handleNext();
       } else {
-        goToScene(Math.max(0, currentScene - 1));
+        handlePrev();
       }
     }
     tx.current = null;
     ty.current = null;
-  }, [currentScene, isPalaceDoorOpen, openPalaceDoor, goToScene]);
+  }, [currentScene, handleNext, handlePrev]);
 
   // Unlock audio on any guest click
   const onTap = useCallback(() => {
@@ -128,6 +201,42 @@ export function App() {
       enableAudio();
     }
   }, [enableAudio]);
+
+  // ── Helper to render overlay content per page ──
+  const renderOverlayContent = (sceneIndex: number) => {
+    switch (sceneIndex) {
+      case 0:
+        return (
+          <Scene1Overlay
+            isOpen={isPalaceDoorOpen}
+            areGatesFullyOpen={areGatesFullyOpen}
+            onOpen={openPalaceDoor}
+          />
+        );
+      case 1:
+        return <Scene2Overlay visible={true} />;
+      case 2:
+        return <Scene3Overlay visible={true} />;
+      case 3:
+        return (
+          <Scene4Overlay
+            visible={true}
+            onPauseTimeline={pause}
+            onResumeTimeline={resume}
+          />
+        );
+      case 4:
+        return (
+          <Scene5Overlay
+            visible={true}
+            onPauseTimeline={pause}
+            onResumeTimeline={resume}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   if (!hasWebGL || force2D) {
     return <FallbackInvitation hasWebGL={hasWebGL} onToggle3D={() => setForce2D(false)} />;
@@ -156,26 +265,46 @@ export function App() {
         tier={deviceTier}
       />
 
-      {/* ── Per-Scene HTML Overlays (Full-Screen, Mobile-Optimized) ── */}
-      {currentScene === 0 && (
-        <Scene1Overlay
-          isOpen={isPalaceDoorOpen}
-          areGatesFullyOpen={areGatesFullyOpen}
-          onOpen={openPalaceDoor}
-        />
-      )}
-      <Scene2Overlay visible={currentScene === 1} />
-      <Scene3Overlay visible={currentScene === 2} />
-      <Scene4Overlay
-        visible={currentScene === 3}
-        onPauseTimeline={pause}
-        onResumeTimeline={resume}
-      />
-      <Scene5Overlay
-        visible={currentScene === 4}
-        onPauseTimeline={pause}
-        onResumeTimeline={resume}
-      />
+      {/* ── 3D Book Page Turning Stage ── */}
+      <div className="book-stage">
+        {/* Subtle luxury spine shadow on left edge */}
+        <div className="book-spine-accent" />
+
+        {pageTurn ? (
+          <>
+            {/* Outgoing page rotating away */}
+            <div
+              key={`out-${pageTurn.outgoing}`}
+              className={`book-page-layer ${
+                pageTurn.direction === 'next' ? 'page-turn-forward-out' : 'page-turn-backward-out'
+              }`}
+            >
+              {renderOverlayContent(pageTurn.outgoing)}
+              <div className="book-sheen" />
+            </div>
+
+            {/* Incoming page turning into view */}
+            <div
+              key={`in-${pageTurn.incoming}`}
+              className={`book-page-layer ${
+                pageTurn.direction === 'next' ? 'page-turn-forward-in' : 'page-turn-backward-in'
+              }`}
+            >
+              {renderOverlayContent(pageTurn.incoming)}
+              <div className="book-sheen" />
+            </div>
+          </>
+        ) : (
+          /* Active page at rest (fully interactive) */
+          <div
+            key={`active-${activeScene}`}
+            className="book-page-layer"
+            style={{ pointerEvents: 'auto' }}
+          >
+            {renderOverlayContent(activeScene)}
+          </div>
+        )}
+      </div>
 
       {/* ── Exactly Three Playback Controls (Previous, Pause/Play, Next) ── */}
       <Navigation
@@ -183,14 +312,15 @@ export function App() {
         totalScenes={5}
         isPlaying={isPlaying}
         progressPercent={progressPercent}
-        onPrev={() => goToScene(Math.max(0, currentScene - 1))}
-        onNext={() => goToScene(currentScene + 1)}
+        onPrev={handlePrev}
+        onNext={handleNext}
         onPause={pause}
         onResume={resume}
         onReplay={replay}
         onSelectScene={goToScene}
         onSkipIntro={skipIntro}
         isAudioPlaying={isAudioPlaying}
+        isPageTurning={!!pageTurn}
       />
 
       {/* ── Minimal One-Tap Action to Enable Wedding Music (if autoplay blocked by mobile browser) ── */}

@@ -293,16 +293,40 @@ export const Scene5Overlay: React.FC<Scene5OverlayProps> = ({
           >
             {WEDDING_DATA.venue.fullAddress}
           </p>
-          <p
+          <div
             style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: 'clamp(0.96rem, 2.8vw, 1.1rem)',
-              color: '#E8A0A0',
-              lineHeight: 1.45,
+              padding: '10px 14px',
+              borderRadius: '12px',
+              background: 'rgba(0,0,0,0.3)',
+              border: '1px solid rgba(212,175,101,0.3)',
+              margin: '8px 0 12px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px',
+              textAlign: 'center',
             }}
           >
-            Barat departs <strong style={{ color: '#F2DCA8' }}>Thursday, 20 Nov 2026 at 5:00 PM</strong> from Sadholi Kadeem
-          </p>
+            <p
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: 'clamp(0.95rem, 2.8vw, 1.08rem)',
+                color: '#FFF5E6',
+                lineHeight: 1.45,
+              }}
+            >
+              🏡 <strong style={{ color: '#F2DCA8' }}>Thursday, 19 Nov 2026:</strong> Mandap &amp; ceremonies at home in <span style={{ color: '#F2DCA8' }}>Sadholi Kadeem</span>
+            </p>
+            <p
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: 'clamp(0.95rem, 2.8vw, 1.08rem)',
+                color: '#FFF5E6',
+                lineHeight: 1.45,
+              }}
+            >
+              💍 <strong style={{ color: '#F2DCA8' }}>Friday, 20 Nov 2026:</strong> Barat departs at 5:00 PM from Sadholi Kadeem to <span style={{ color: '#F2DCA8' }}>Shiva Banquet Hall</span>
+            </p>
+          </div>
 
           {/* Action buttons */}
           <div

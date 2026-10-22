@@ -274,9 +274,10 @@ export const FallbackInvitation: React.FC<FallbackInvitationProps> = ({
             {WEDDING_DATA.venue.fullAddress}
           </p>
 
-          <p className="text-xs text-rose-200 mt-2">
-            Barat departs on Thursday, 20 Nov 2026 at 5:00 PM from {WEDDING_DATA.departureInfo.origin}
-          </p>
+          <div className="my-2 p-2 rounded-lg bg-black/40 border border-amber-500/20 text-xs text-rose-200 space-y-1">
+            <p>🏡 <strong className="text-amber-200">Thursday, 19 Nov 2026:</strong> Mandap &amp; rituals at home in Sadholi Kadeem</p>
+            <p>💍 <strong className="text-amber-200">Friday, 20 Nov 2026:</strong> Barat departs at 5:00 PM from {WEDDING_DATA.departureInfo.origin} to Shiva Banquet Hall</p>
+          </div>
 
           <div className="flex flex-wrap items-center justify-center gap-3 mt-5">
             <a

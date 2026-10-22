@@ -226,7 +226,7 @@ export const Scene2Overlay: React.FC<{ visible: boolean }> = ({ visible }) => (
           letterSpacing: '0.06em',
         }}
       >
-        18 – 20 November 2026 &nbsp;•&nbsp; Saharanpur
+        Thursday, 19 &amp; Friday, 20 November 2026 &nbsp;•&nbsp; Saharanpur
       </p>
 
       <div

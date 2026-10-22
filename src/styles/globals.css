@@ -238,3 +238,171 @@ canvas { display: block; max-width: 100%; }
 @media (max-height: 420px) and (orientation: landscape) {
   .hide-landscape { display: none !important; }
 }
+
+/* ─── ROYAL WEDDING ALBUM BOOK TRANSITIONS ────────────────── */
+.book-stage {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  perspective: 1600px;
+  perspective-origin: center center;
+  transform-style: preserve-3d;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.book-page-layer {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+.book-page-layer > * {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Page turning FORWARD (Next) */
+.page-turn-forward-out {
+  transform-origin: left center;
+  animation: pageTurnForwardOut 0.68s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  pointer-events: none !important;
+}
+
+.page-turn-forward-in {
+  transform-origin: right center;
+  animation: pageTurnForwardIn 0.68s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  pointer-events: none !important;
+}
+
+/* Page turning BACKWARD (Prev) */
+.page-turn-backward-out {
+  transform-origin: right center;
+  animation: pageTurnBackwardOut 0.68s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  pointer-events: none !important;
+}
+
+.page-turn-backward-in {
+  transform-origin: left center;
+  animation: pageTurnBackwardIn 0.68s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  pointer-events: none !important;
+}
+
+@keyframes pageTurnForwardOut {
+  0% {
+    transform: rotateY(0deg) translateZ(0);
+    opacity: 1;
+    filter: drop-shadow(0 10px 25px rgba(0,0,0,0.5));
+  }
+  40% {
+    opacity: 0.95;
+    filter: drop-shadow(-20px 20px 40px rgba(0,0,0,0.7));
+  }
+  100% {
+    transform: rotateY(-88deg) translateZ(-30px) scale(0.96);
+    opacity: 0;
+    filter: drop-shadow(-40px 25px 50px rgba(0,0,0,0.85));
+  }
+}
+
+@keyframes pageTurnForwardIn {
+  0% {
+    transform: rotateY(50deg) translateZ(-40px) scale(0.95);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: rotateY(0deg) translateZ(0) scale(1);
+    opacity: 1;
+    filter: drop-shadow(0 10px 25px rgba(0,0,0,0.5));
+  }
+}
+
+@keyframes pageTurnBackwardOut {
+  0% {
+    transform: rotateY(0deg) translateZ(0);
+    opacity: 1;
+  }
+  100% {
+    transform: rotateY(88deg) translateZ(-30px) scale(0.96);
+    opacity: 0;
+  }
+}
+
+@keyframes pageTurnBackwardIn {
+  0% {
+    transform: rotateY(-50deg) translateZ(-40px) scale(0.95);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: rotateY(0deg) translateZ(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Page curl sheen overlay */
+.book-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(212, 175, 101, 0.2) 40%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  mix-blend-mode: overlay;
+  animation: bookSheenSweep 0.68s ease-in-out forwards;
+}
+
+@keyframes bookSheenSweep {
+  0% { opacity: 0; transform: translateX(-35%); }
+  45% { opacity: 0.85; transform: translateX(0%); }
+  100% { opacity: 0; transform: translateX(35%); }
+}
+
+/* Subtle luxury spine shadow on left edge */
+.book-spine-accent {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 14px;
+  background: linear-gradient(90deg, rgba(22, 11, 16, 0.7) 0%, rgba(212, 175, 101, 0.18) 50%, transparent 100%);
+  pointer-events: none;
+  z-index: 10;
+  border-right: 1px solid rgba(212, 175, 101, 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-turn-forward-out,
+  .page-turn-backward-out {
+    animation: fadeOutSimple 0.35s ease forwards !important;
+    transform: none !important;
+  }
+  .page-turn-forward-in,
+  .page-turn-backward-in {
+    animation: fadeInSimple 0.35s ease forwards !important;
+    transform: none !important;
+  }
+  .book-sheen {
+    display: none !important;
+  }
+}
+@keyframes fadeOutSimple { to { opacity: 0; } }
+@keyframes fadeInSimple { from { opacity: 0; } to { opacity: 1; } }
+
