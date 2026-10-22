@@ -72,7 +72,7 @@ export const FallbackInvitation: React.FC<FallbackInvitationProps> = ({
           <button
             onClick={toggleAudio}
             className="p-2 sm:px-3 sm:py-1.5 rounded-full glass-panel text-amber-200 border border-amber-500/40 flex items-center gap-1.5 transition-all"
-            title="Toggle Shehnai Music"
+            title="Toggle Wedding Music"
           >
             {isAudioPlaying ? (
               <Volume2 size={16} className="text-amber-300" />

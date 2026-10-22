@@ -24,7 +24,7 @@
     <script>
       // Automatic cache-buster for mobile browsers & in-app webviews
       (function() {
-        var APP_VERSION = '20261022-v3';
+        var APP_VERSION = '20261022-v5';
         try {
           var url = new URL(window.location.href);
           if (url.searchParams.get('v') !== APP_VERSION) {
@@ -35,8 +35,9 @@
       })();
     </script>
 
-    <!-- Preload royal invitation card image -->
+    <!-- Preload royal invitation card image & background music -->
     <link rel="preload" as="image" href="/harsh-himanshi-wedding/images/wedding-invitation-card.jpg" />
+    <link rel="preload" as="fetch" href="/harsh-himanshi-wedding/audio/Gallan-Do-from-50-seconds.mp3" crossorigin="anonymous" />
 
     <meta property="og:type" content="website" />
 

@@ -139,6 +139,11 @@ export function App() {
     }
   }, []);
 
+  const toggleAudio = useCallback(() => {
+    const playing = royalAudio.toggle();
+    setIsAudioPlaying(playing);
+  }, []);
+
   // ── Keyboard shortcuts ──
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -321,6 +326,7 @@ export function App() {
         onSelectScene={goToScene}
         onSkipIntro={skipIntro}
         isAudioPlaying={isAudioPlaying}
+        onToggleAudio={toggleAudio}
         isPageTurning={!!pageTurn}
       />
 
@@ -361,7 +367,7 @@ export function App() {
               letterSpacing: '0.04em',
             }}
           >
-            Tap to enable wedding music
+            Tap to begin invitation
           </span>
         </div>
       )}

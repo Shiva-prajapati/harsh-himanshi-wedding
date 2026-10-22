@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pause, Play, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Pause, Play, ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
 
 interface NavigationProps {
   currentScene: number;
@@ -21,12 +21,12 @@ interface NavigationProps {
 }
 
 /**
- * Navigation Bar — Exactly Three Playback Controls:
+ * Navigation Bar — Playback Controls + Audio Mute/Unmute:
  * 1. Previous arrow
  * 2. Pause / Play toggle
  * 3. Next arrow
+ * 4. Mute / Unmute music
  *
- * All settings, 2D view, separate music buttons, and dot bars removed as requested.
  * Minimum 48x48 CSS pixel touch targets for mobile accessibility.
  */
 export const Navigation: React.FC<NavigationProps> = ({
@@ -38,6 +38,8 @@ export const Navigation: React.FC<NavigationProps> = ({
   onPause,
   onResume,
   isPageTurning = false,
+  isAudioPlaying = false,
+  onToggleAudio,
 }) => {
   return (
     <nav
@@ -156,6 +158,36 @@ export const Navigation: React.FC<NavigationProps> = ({
         >
           <ChevronRight size={24} />
         </button>
+
+        {/* 4. MUTE / UNMUTE AUDIO TOGGLE */}
+        {onToggleAudio && (
+          <button
+            type="button"
+            onClick={onToggleAudio}
+            aria-label={isAudioPlaying ? 'Mute wedding music' : 'Unmute wedding music'}
+            title={isAudioPlaying ? 'Mute wedding music' : 'Unmute wedding music'}
+            style={{
+              minWidth: '48px',
+              minHeight: '48px',
+              borderRadius: '50%',
+              border: isAudioPlaying
+                ? '1.5px solid rgba(242, 220, 168, 0.7)'
+                : '1px solid rgba(212, 175, 101, 0.35)',
+              background: isAudioPlaying
+                ? 'linear-gradient(135deg, rgba(120, 27, 50, 0.85) 0%, rgba(87, 13, 32, 0.9) 100%)'
+                : 'rgba(22, 11, 16, 0.7)',
+              color: isAudioPlaying ? '#F2DCA8' : 'rgba(242, 220, 168, 0.45)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s ease',
+              padding: 0,
+            }}
+          >
+            {isAudioPlaying ? <Volume2 size={20} /> : <VolumeX size={20} />}
+          </button>
+        )}
       </div>
     </nav>
   );
