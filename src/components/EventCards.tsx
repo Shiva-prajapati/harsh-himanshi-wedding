@@ -17,41 +17,13 @@ export const EventCards: React.FC<EventCardsProps> = ({ reducedMotion = false })
     const centerOffset = (count - 1) / 2;
     const spacing = count <= 2 ? 2.2 : 1.6;
 
-    if (reducedMotion) {
-      refs.current.forEach((r, i) => {
-        if (!r) return;
-        r.position.set((i - centerOffset) * spacing, 0, i * 0.08);
-        r.rotation.set(0, 0, (i - centerOffset) * -0.05);
-      });
-      return;
-    }
-    const tl = gsap.timeline();
     refs.current.forEach((r, i) => {
       if (!r) return;
-      const xTarget = (i - centerOffset) * spacing;
-      r.position.set(xTarget, -5.5, -1);
-      r.rotation.set(0.4, 0, (i - centerOffset) * -0.06);
-      r.scale.set(0.65, 0.65, 0.65);
-      tl.to(
-        r.position,
-        { x: xTarget, y: 0, z: i * 0.08, duration: 1.3, ease: 'power3.out' },
-        i * 0.12
-      )
-        .to(
-          r.rotation,
-          { x: 0, z: (i - centerOffset) * -0.06, duration: 1.3, ease: 'power2.out' },
-          i * 0.12
-        )
-        .to(
-          r.scale,
-          { x: 1, y: 1, z: 1, duration: 1.1, ease: 'back.out(1.1)' },
-          i * 0.12
-        );
+      r.position.set((i - centerOffset) * spacing, 0, i * 0.08);
+      r.rotation.set(0, 0, (i - centerOffset) * -0.05);
+      r.scale.set(1, 1, 1);
     });
-    return () => {
-      tl.kill();
-    };
-  }, [reducedMotion]);
+  }, []);
 
   useFrame(({ clock }) => {
     if (reducedMotion) return;
@@ -141,7 +113,6 @@ export const Scene4Overlay: React.FC<Scene4OverlayProps> = ({
         overscrollBehaviorY: 'contain',
         pointerEvents: visible ? 'auto' : 'none',
         opacity: visible ? 1 : 0,
-        transition: 'opacity 0.6s ease',
         zIndex: 25,
         paddingTop: 'clamp(54px, 11vw, 80px)',
         paddingBottom: 'clamp(130px, 22vw, 170px)',

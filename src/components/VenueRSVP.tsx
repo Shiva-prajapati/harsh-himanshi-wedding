@@ -180,7 +180,6 @@ export const Scene5Overlay: React.FC<Scene5OverlayProps> = ({
         overscrollBehaviorY: 'contain',
         pointerEvents: visible ? 'auto' : 'none',
         opacity: visible ? 1 : 0,
-        transition: 'opacity 0.6s ease',
         zIndex: 25,
         paddingTop: 'clamp(54px, 11vw, 80px)',
         paddingBottom: 'clamp(120px, 20vw, 160px)',

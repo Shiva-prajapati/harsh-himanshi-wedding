@@ -14,25 +14,10 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({ reducedMotion = 
 
   useEffect(() => {
     if (!groupRef.current) return;
-    if (reducedMotion) {
-      groupRef.current.position.set(0, 0, 0);
-      groupRef.current.rotation.set(0, 0, 0);
-      return;
-    }
-
-    groupRef.current.position.set(0, -1.8, -2.5);
-    groupRef.current.rotation.set(0.5, -0.5, 0.15);
-    groupRef.current.scale.set(0.55, 0.55, 0.55);
-
-    const tl = gsap.timeline();
-    tl.to(groupRef.current.position, { x: 0, y: 0, z: 0, duration: 1.6, ease: 'power3.out' }, 0)
-      .to(groupRef.current.rotation, { x: 0, y: 0, z: 0, duration: 1.8, ease: 'power2.out' }, 0)
-      .to(groupRef.current.scale, { x: 1, y: 1, z: 1, duration: 1.6, ease: 'back.out(1.1)' }, 0);
-
-    return () => {
-      tl.kill();
-    };
-  }, [reducedMotion]);
+    groupRef.current.position.set(0, 0, 0);
+    groupRef.current.rotation.set(0, 0, 0);
+    groupRef.current.scale.set(1, 1, 1);
+  }, []);
 
   useFrame(({ clock }) => {
     if (reducedMotion || !groupRef.current) return;
@@ -90,7 +75,6 @@ export const Scene2Overlay: React.FC<{ visible: boolean }> = ({ visible }) => (
       alignItems: 'center',
       justifyContent: 'center',
       opacity: visible ? 1 : 0,
-      transition: 'opacity 0.6s ease',
       pointerEvents: visible ? 'auto' : 'none',
       zIndex: 25,
       padding: 'clamp(20px, 4vw, 36px) clamp(16px, 4vw, 24px)',
