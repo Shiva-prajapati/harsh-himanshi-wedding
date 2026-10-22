@@ -90,7 +90,7 @@ export function App() {
       setPageTurn(null);
       isTurningRef.current = false;
       turnTimerRef.current = null;
-    }, 620);
+    }, 680);
   }, [currentScene, activeScene]);
 
   useEffect(() => {
@@ -271,45 +271,29 @@ export function App() {
         <div className="book-spine-accent" />
 
         {pageTurn ? (
-          pageTurn.direction === 'next' ? (
-            <>
-              {/* Revealed next page: sitting flat underneath */}
-              <div
-                key={`under-${pageTurn.incoming}`}
-                className="book-page-layer page-base-revealed"
-              >
-                {renderOverlayContent(pageTurn.incoming)}
-              </div>
+          <>
+            {/* Outgoing page rotating away */}
+            <div
+              key={`out-${pageTurn.outgoing}`}
+              className={`book-page-layer ${
+                pageTurn.direction === 'next' ? 'page-turn-forward-out' : 'page-turn-backward-out'
+              }`}
+            >
+              {renderOverlayContent(pageTurn.outgoing)}
+              <div className="book-sheen" />
+            </div>
 
-              {/* Turning top page: single sheet flipping away to the left */}
-              <div
-                key={`flip-${pageTurn.outgoing}`}
-                className="book-page-layer page-turn-forward-flip"
-              >
-                {renderOverlayContent(pageTurn.outgoing)}
-                <div className="book-sheen" />
-              </div>
-            </>
-          ) : (
-            <>
-              {/* Current page: sitting flat underneath */}
-              <div
-                key={`under-${pageTurn.outgoing}`}
-                className="book-page-layer page-base-revealed"
-              >
-                {renderOverlayContent(pageTurn.outgoing)}
-              </div>
-
-              {/* Turning previous page: single sheet flipping into place from the left */}
-              <div
-                key={`flip-${pageTurn.incoming}`}
-                className="book-page-layer page-turn-backward-flip"
-              >
-                {renderOverlayContent(pageTurn.incoming)}
-                <div className="book-sheen" />
-              </div>
-            </>
-          )
+            {/* Incoming page turning into view */}
+            <div
+              key={`in-${pageTurn.incoming}`}
+              className={`book-page-layer ${
+                pageTurn.direction === 'next' ? 'page-turn-forward-in' : 'page-turn-backward-in'
+              }`}
+            >
+              {renderOverlayContent(pageTurn.incoming)}
+              <div className="book-sheen" />
+            </div>
+          </>
         ) : (
           /* Active page at rest (fully interactive) */
           <div

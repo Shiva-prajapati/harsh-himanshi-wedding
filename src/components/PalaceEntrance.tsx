@@ -317,45 +317,43 @@ export const Scene1Overlay: React.FC<Scene1OverlayProps> = ({
   areGatesFullyOpen,
   onOpen,
 }) => {
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!cardRef.current) return;
     if (!areGatesFullyOpen) {
-      // Gates closed or opening: keep all 7 elements completely hidden
-      itemRefs.current.forEach((el) => {
-        if (el) gsap.set(el, { opacity: 0, y: 16 });
-      });
+      gsap.set(cardRef.current, { opacity: 0, scale: 0.94, y: 16 });
       return;
     }
 
-    // Gates have reached fully open position:
-    // Sequentially reveal each element one by one with GSAP stagger (0.38s)
-    const tl = gsap.timeline();
-
-    itemRefs.current.forEach((el, index) => {
-      if (!el) return;
-      tl.to(
-        el,
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.35,
-          ease: 'power2.out',
-        },
-        index * 0.38 // Stagger interval of 0.38s between elements
-      );
+    // Reveal the invitation card immediately and smoothly when gates reach fully open
+    gsap.to(cardRef.current, {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      duration: 0.45,
+      ease: 'power2.out',
     });
-
-    return () => {
-      tl.kill();
-    };
   }, [areGatesFullyOpen]);
+
+  const invitationCardImg = `${import.meta.env.BASE_URL}images/wedding-invitation-card.jpg`;
 
   return (
     <div
       className="scene-overlay"
       style={{
         pointerEvents: isOpen ? 'none' : 'auto',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        WebkitOverflowScrolling: 'touch',
+        paddingTop: 'clamp(14px, 3.5vw, 24px)',
+        paddingBottom: 'clamp(76px, 14vw, 100px)',
+        paddingLeft: 'clamp(12px, 3vw, 20px)',
+        paddingRight: 'clamp(12px, 3vw, 20px)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
       onClick={() => {
         if (!isOpen) onOpen();
@@ -364,172 +362,96 @@ export const Scene1Overlay: React.FC<Scene1OverlayProps> = ({
       {/* Subtle radial dark vignette that frames the palace gateway */}
       <div
         style={{
-          position: 'absolute',
+          position: 'fixed',
           inset: 0,
           background: 'radial-gradient(ellipse at center, transparent 35%, rgba(13,6,9,0.7) 100%)',
           pointerEvents: 'none',
         }}
       />
 
-      {/* ── INVITATION TEXT: Sequential One-By-One GSAP Reveal Inside Opened Gate ── */}
+      {/* ── WEDDING INVITATION CARD: Revealed immediately when gates are fully open ── */}
       <div
+        ref={cardRef}
         style={{
-          position: 'absolute',
-          top: 'clamp(54px, 11vw, 92px)',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: 'min(440px, 92vw)',
-          textAlign: 'center',
-          pointerEvents: 'none',
+          position: 'relative',
+          opacity: 0,
+          willChange: 'opacity, transform',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          maxWidth: 'min(92vw, 420px)',
+          width: '100%',
+          pointerEvents: areGatesFullyOpen ? 'auto' : 'none',
+          zIndex: 10,
         }}
       >
-        {/* Sequence 1: ॥ श्री गणेशाय नमः ॥ */}
-        <div ref={(el) => (itemRefs.current[0] = el)} style={{ opacity: 0, willChange: 'opacity, transform' }}>
-          <p
-            className="t-hindi"
+        {/* Luxury Royal Card Frame with Gold Border & Ambient Shadow */}
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            borderRadius: '20px',
+            overflow: 'hidden',
+            border: '2.5px solid rgba(212, 175, 101, 0.85)',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.75), 0 0 32px rgba(212,175,101,0.3)',
+            background: '#FFFDF8',
+            lineHeight: 0,
+          }}
+        >
+          {/* High-Resolution Wedding Invitation Design matching user reference */}
+          <img
+            src={invitationCardImg}
+            alt="Harsh & Himanshi Wedding Invitation Card"
             style={{
-              color: '#F2DCA8',
-              fontSize: 'clamp(1.15rem, 3.6vw, 1.4rem)',
-              fontWeight: 600,
-              letterSpacing: '0.08em',
-              textShadow: '0 0 16px rgba(212,175,101,0.6)',
-              marginBottom: '6px',
+              width: '100%',
+              height: 'auto',
+              maxHeight: 'clamp(440px, 68dvh, 600px)',
+              objectFit: 'contain',
+              display: 'block',
+              margin: '0 auto',
             }}
-          >
-            {WEDDING_DATA.ganeshaMantra}
-          </p>
-
-          <div
-            style={{
-              height: '1px',
-              background: 'linear-gradient(90deg, transparent, #D4AF65, transparent)',
-              margin: '8px auto',
-              width: '180px',
-            }}
+            loading="eager"
           />
         </div>
 
-        {/* Sequence 2: YOU ARE CORDIALLY INVITED */}
-        <div ref={(el) => (itemRefs.current[1] = el)} style={{ opacity: 0, willChange: 'opacity, transform' }}>
-          <h1
-            className="t-hero gold-shimmer"
+        {/* Slender Royal Date & Location Capsule */}
+        <div
+          style={{
+            marginTop: '10px',
+            padding: '6px 18px',
+            borderRadius: '999px',
+            background: 'linear-gradient(135deg, rgba(87,13,32,0.92) 0%, rgba(22,11,16,0.96) 100%)',
+            border: '1.5px solid rgba(212,175,101,0.6)',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.6), 0 0 12px rgba(212,175,101,0.25)',
+            display: 'inline-flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '2px',
+            textAlign: 'center',
+          }}
+        >
+          <span
             style={{
-              fontSize: 'clamp(1.75rem, 6vw, 2.5rem)',
+              fontFamily: 'var(--font-royal)',
+              fontSize: 'clamp(0.82rem, 2.5vw, 0.98rem)',
+              color: '#FFF5E6',
+              fontWeight: 600,
+              letterSpacing: '0.06em',
+            }}
+          >
+            Thursday, 19 – Friday, 20 November 2026
+          </span>
+          <span
+            style={{
+              fontFamily: 'var(--font-ui)',
+              fontSize: 'clamp(0.68rem, 2vw, 0.78rem)',
+              color: '#D4AF65',
               letterSpacing: '0.08em',
-              marginTop: '4px',
-              marginBottom: '4px',
-              fontWeight: 700,
+              textTransform: 'uppercase',
             }}
           >
-            YOU ARE CORDIALLY INVITED
-          </h1>
-        </div>
-
-        {/* Sequence 3: TO THE WEDDING CELEBRATION OF */}
-        <div ref={(el) => (itemRefs.current[2] = el)} style={{ opacity: 0, willChange: 'opacity, transform' }}>
-          <p
-            className="t-label"
-            style={{
-              color: '#F2DCA8',
-              fontSize: 'clamp(0.85rem, 2.6vw, 1rem)',
-              letterSpacing: '0.14em',
-              fontWeight: 500,
-              marginTop: '6px',
-              marginBottom: '14px',
-              textShadow: '0 2px 6px rgba(0,0,0,0.6)',
-            }}
-          >
-            TO THE WEDDING CELEBRATION OF
-          </p>
-        </div>
-
-        {/* Sequence 4: HARSH PRAJAPATI */}
-        <div ref={(el) => (itemRefs.current[3] = el)} style={{ opacity: 0, willChange: 'opacity, transform' }}>
-          <h2
-            className="t-names gold-shimmer"
-            style={{
-              fontSize: 'clamp(2.1rem, 7.5vw, 3.1rem)',
-              lineHeight: 1.15,
-              fontWeight: 800,
-              textShadow: '0 2px 14px rgba(212,175,101,0.45)',
-            }}
-          >
-            HARSH PRAJAPATI
-          </h2>
-        </div>
-
-        {/* Sequence 5: & */}
-        <div ref={(el) => (itemRefs.current[4] = el)} style={{ opacity: 0, willChange: 'opacity, transform' }}>
-          <p
-            style={{
-              color: '#F2DCA8',
-              fontSize: 'clamp(1.6rem, 5vw, 2.2rem)',
-              fontFamily: 'var(--font-script)',
-              margin: '2px 0',
-              textShadow: '0 0 12px rgba(242,220,168,0.5)',
-            }}
-          >
-            &amp;
-          </p>
-        </div>
-
-        {/* Sequence 6: HIMANSHI PRAJAPATI */}
-        <div ref={(el) => (itemRefs.current[5] = el)} style={{ opacity: 0, willChange: 'opacity, transform' }}>
-          <h2
-            className="t-names gold-shimmer"
-            style={{
-              fontSize: 'clamp(2.1rem, 7.5vw, 3.1rem)',
-              lineHeight: 1.15,
-              fontWeight: 800,
-              textShadow: '0 2px 14px rgba(212,175,101,0.45)',
-            }}
-          >
-            HIMANSHI PRAJAPATI
-          </h2>
-        </div>
-
-        {/* Sequence 7: Verified Wedding Date Information */}
-        <div ref={(el) => (itemRefs.current[6] = el)} style={{ opacity: 0, willChange: 'opacity, transform' }}>
-          <div
-            style={{
-              marginTop: '14px',
-              padding: '8px 20px',
-              borderRadius: '999px',
-              background: 'linear-gradient(135deg, rgba(87,13,32,0.85) 0%, rgba(22,11,16,0.92) 100%)',
-              border: '1.5px solid rgba(212,175,101,0.55)',
-              boxShadow: '0 4px 18px rgba(0,0,0,0.6), 0 0 16px rgba(212,175,101,0.25)',
-              display: 'inline-flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '2px',
-            }}
-          >
-            <span
-              style={{
-                fontFamily: 'var(--font-royal)',
-                fontSize: 'clamp(0.85rem, 2.6vw, 1.05rem)',
-                color: '#FFF5E6',
-                fontWeight: 600,
-                letterSpacing: '0.06em',
-              }}
-            >
-              Thursday, 19 – Friday, 20 November 2026
-            </span>
-            <span
-              style={{
-                fontFamily: 'var(--font-ui)',
-                fontSize: 'clamp(0.72rem, 2vw, 0.82rem)',
-                color: '#D4AF65',
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-              }}
-            >
-              19 Nov: Home, Sadholi Kadeem • 20 Nov: Shiva Banquet Hall
-            </span>
-          </div>
+            19 Nov: Home, Sadholi Kadeem • 20 Nov: Shiva Banquet Hall
+          </span>
         </div>
       </div>
 

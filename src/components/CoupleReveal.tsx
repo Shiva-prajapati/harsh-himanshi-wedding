@@ -16,10 +16,23 @@ export const CoupleReveal: React.FC<CoupleRevealProps> = ({ reducedMotion = fals
 
   useEffect(() => {
     if (!leftRef.current || !rightRef.current) return;
-    leftRef.current.position.set(-2.2, 0, 0);
-    rightRef.current.position.set(2.2, 0, 0);
-    if (knotRef.current) (knotRef.current.scale as THREE.Vector3).set(1, 1, 1);
-  }, []);
+    if (reducedMotion) {
+      leftRef.current.position.set(-2, 0, 0);
+      rightRef.current.position.set(2, 0, 0);
+      return;
+    }
+    leftRef.current.position.set(-7, 0, -1);
+    rightRef.current.position.set(7, 0, -1);
+    if (knotRef.current) (knotRef.current.scale as THREE.Vector3).set(0, 0, 0);
+
+    const tl = gsap.timeline();
+    tl.to(leftRef.current.position,  { x: -2.2, y: 0, z: 0, duration: 1.5, ease: 'power3.out' }, 0)
+      .to(rightRef.current.position, { x:  2.2, y: 0, z: 0, duration: 1.5, ease: 'power3.out' }, 0)
+      .to(knotRef.current?.scale || {}, { x: 1, y: 1, z: 1, duration: 1.0, ease: 'elastic.out(1,0.5)' }, 0.7);
+    return () => {
+      tl.kill();
+    };
+  }, [reducedMotion]);
 
   useFrame(({ clock }) => {
     if (reducedMotion) return;
@@ -103,6 +116,7 @@ export const Scene3Overlay: React.FC<{ visible: boolean }> = ({ visible }) => (
       overscrollBehaviorY: 'contain',
       pointerEvents: visible ? 'auto' : 'none',
       opacity: visible ? 1 : 0,
+      transition: 'opacity 0.6s ease',
       zIndex: 25,
       paddingTop: 'clamp(52px, 10vw, 76px)',
       paddingBottom: 'clamp(110px, 18vw, 150px)',

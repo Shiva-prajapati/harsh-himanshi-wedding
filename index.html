@@ -7,11 +7,6 @@
     <!-- Mobile-first viewport: allow-wide content, no forced pinch-zoom lock -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
-    <!-- Cache control: ensure guests receive newest updates without stale cache -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-
     <!-- PWA / share meta -->
     <meta name="theme-color" content="#6B1A2C" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -21,6 +16,14 @@
     <!-- Open Graph for WhatsApp sharing -->
     <meta property="og:title" content="Harsh & Himanshi — Royal Wedding Invitation 🪷" />
     <meta property="og:description" content="You are cordially invited to celebrate the royal wedding of Harsh Prajapati & Himanshi Prajapati — 19–20 November 2026, Saharanpur." />
+    <!-- Cache control headers to prevent mobile browser stale caching -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <!-- Preload royal invitation card image -->
+    <link rel="preload" as="image" href="/harsh-himanshi-wedding/images/wedding-invitation-card.jpg" />
+
     <meta property="og:type" content="website" />
 
     <title>Harsh &amp; Himanshi — Royal Wedding Invitation</title>
