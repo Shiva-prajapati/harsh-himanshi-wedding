@@ -9,7 +9,7 @@ import gsap from 'gsap';
 
 // How long each scene stays visible (seconds)
 const SCENE_DURATIONS = [
-  10.0, // 0 – Palace entrance (doors open in ~2s, sequential text reveal ~2.65s, ~5.35s read time)
+  13.0, // 0 – Palace entrance (doors open in ~2s, camera glides into grand hall 1.4-3.9s, 3D card rotating reveal, ~8.25s read time)
   5.5, // 1 – Sacred Invitation Card (~5-6s)
   6.5, // 2 – Couple & Family Lineage (~6-7s)
   8,   // 3 – Wedding Programme Events (auto-advances unless user scrolls/interacts)

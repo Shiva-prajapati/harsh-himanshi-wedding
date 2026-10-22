@@ -1,6 +1,7 @@
-import React, { Suspense, useRef } from 'react';
+import React, { Suspense, useRef, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import gsap from 'gsap';
 import { Lights } from './Lights';
 import { Particles } from './Particles';
 import { PalaceEntrance } from './PalaceEntrance';
@@ -19,14 +20,98 @@ interface SceneProps {
   tier?: DeviceTier;
 }
 
-// Subtle mouse-parallax camera rig
-function CameraRig({ reducedMotion = false }: { reducedMotion?: boolean }) {
+// Subtle mouse-parallax and cinematic gateway-entrance camera rig
+function CameraRig({
+  reducedMotion = false,
+  currentScene,
+  isPalaceDoorOpen,
+}: {
+  reducedMotion?: boolean;
+  currentScene: number;
+  isPalaceDoorOpen: boolean;
+}) {
+  const targetZRef = useRef(5.2);
+  const targetYRef = useRef(0.0);
+  const lookAtZRef = useRef(0.0);
+  const animTimelineRef = useRef<gsap.core.Timeline | null>(null);
+
+  useEffect(() => {
+    animTimelineRef.current?.kill();
+
+    if (currentScene === 0) {
+      if (!isPalaceDoorOpen) {
+        targetZRef.current = 5.2;
+        targetYRef.current = 0.0;
+        lookAtZRef.current = 0.0;
+        return;
+      }
+
+      if (reducedMotion) {
+        targetZRef.current = 2.1;
+        targetYRef.current = 0.08;
+        lookAtZRef.current = -3.5;
+        return;
+      }
+
+      // Smooth camera glide forward through opened gates into wedding hall aisle
+      const tl = gsap.timeline();
+      animTimelineRef.current = tl;
+
+      tl.to(
+        targetZRef,
+        {
+          current: 2.1,
+          duration: 2.5,
+          delay: 1.4,
+          ease: 'power2.inOut',
+        },
+        0
+      );
+
+      tl.to(
+        targetYRef,
+        {
+          current: 0.08,
+          duration: 2.5,
+          delay: 1.4,
+          ease: 'power2.inOut',
+        },
+        0
+      );
+
+      tl.to(
+        lookAtZRef,
+        {
+          current: -3.5,
+          duration: 2.5,
+          delay: 1.4,
+          ease: 'power2.inOut',
+        },
+        0
+      );
+
+      return () => {
+        tl.kill();
+      };
+    } else {
+      // Scenes 1, 2, 3, 4: default camera position
+      targetZRef.current = 5.2;
+      targetYRef.current = 0.0;
+      lookAtZRef.current = 0.0;
+    }
+  }, [currentScene, isPalaceDoorOpen, reducedMotion]);
+
   useFrame(({ camera, pointer }) => {
-    if (reducedMotion) return;
-    camera.position.x = THREE.MathUtils.lerp(camera.position.x, pointer.x * 0.35, 0.04);
-    camera.position.y = THREE.MathUtils.lerp(camera.position.y, pointer.y * 0.25 + 0.1, 0.04);
-    camera.lookAt(0, 0, 0);
+    const pX = reducedMotion ? 0 : pointer.x * 0.28;
+    const pY = (reducedMotion ? 0 : pointer.y * 0.18) + targetYRef.current;
+
+    camera.position.x = THREE.MathUtils.lerp(camera.position.x, pX, 0.04);
+    camera.position.y = THREE.MathUtils.lerp(camera.position.y, pY, 0.04);
+    camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZRef.current, 0.06);
+
+    camera.lookAt(0, 0.1, lookAtZRef.current);
   });
+
   return null;
 }
 
@@ -75,7 +160,11 @@ export const Scene: React.FC<SceneProps> = ({
       <Suspense fallback={<CanvasLoader />}>
         <Lights sceneIndex={currentScene} />
         <Particles reducedMotion={reducedMotion} tier={tier} />
-        <CameraRig reducedMotion={reducedMotion} />
+        <CameraRig
+          reducedMotion={reducedMotion}
+          currentScene={currentScene}
+          isPalaceDoorOpen={isPalaceDoorOpen}
+        />
 
         {currentScene === 0 && (
           <PalaceEntrance

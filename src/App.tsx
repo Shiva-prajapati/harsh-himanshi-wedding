@@ -211,6 +211,7 @@ export function App() {
             isOpen={isPalaceDoorOpen}
             areGatesFullyOpen={areGatesFullyOpen}
             onOpen={openPalaceDoor}
+            reducedMotion={reducedMotion}
           />
         );
       case 1:

@@ -86,15 +86,15 @@ export const WEDDING_DATA: WeddingData = {
   events: [
     {
       id: "mandap",
-      title: "Mandap & Home Ceremony",
+      title: "Mandha & Home Ceremony",
       subTitle: "Sacred rituals & auspicious home sanctification",
       day: "Thursday",
       date: "19 November 2026",
-      time: "Mandap 10:00 AM | Lunch 12:00 Noon | Ghurchari 9:00 PM",
+      time: "Mandha 10:00 AM | Lunch 12:00 Noon | Ghurchari 9:00 PM",
       venue: "At Home, Vill. Sadholi Kadeem",
       locationDetails: "Ceremony will take place at home in Sadholi Kadeem",
       icon: "🕍",
-      description: "The auspicious Mandap ceremony and sacred Vedic rituals will take place at home in Sadholi Kadeem, followed by festive Lunch and royal Ghurchari in the evening.",
+      description: "The auspicious Mandha ceremony and sacred Vedic rituals will take place at home in Sadholi Kadeem, followed by festive Lunch and royal Ghurchari in the evening.",
     },
     {
       id: "wedding",

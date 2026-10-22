@@ -314,7 +314,7 @@ export const Scene5Overlay: React.FC<Scene5OverlayProps> = ({
                 lineHeight: 1.45,
               }}
             >
-              🏡 <strong style={{ color: '#F2DCA8' }}>Thursday, 19 Nov 2026:</strong> Mandap &amp; ceremonies at home in <span style={{ color: '#F2DCA8' }}>Sadholi Kadeem</span>
+              🏡 <strong style={{ color: '#F2DCA8' }}>Thursday, 19 Nov 2026:</strong> Mandha &amp; ceremonies at home in <span style={{ color: '#F2DCA8' }}>Sadholi Kadeem</span>
             </p>
             <p
               style={{

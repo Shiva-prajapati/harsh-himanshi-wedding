@@ -12,6 +12,228 @@ interface PalaceEntranceProps {
   reducedMotion?: boolean;
 }
 
+// ─────────────────────────────────────────────────────────────────────
+// WEDDING HALL AISLE (Storyboard Step 3: Walkway inside the palace)
+// Features:
+// - Velvet crimson runner carpet with dual gold-embroidered borders
+// - Flanking ivory & gold royal columns with capital moulding
+// - Flickering brass diya oil lamps casting warm light
+// - Overhead floral garlands and crystal chandeliers
+// - Distant glowing mandap archway with sacred backdrop illumination
+// - Scattered rose petals on the polished marble aisle
+// ─────────────────────────────────────────────────────────────────────
+function WeddingHallAisle() {
+  const chandelierRef = useRef<THREE.PointLight>(null);
+  const aisleDiyas = useRef<(THREE.PointLight | null)[]>([]);
+
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    if (chandelierRef.current) {
+      chandelierRef.current.intensity = 2.4 + Math.sin(t * 3.5) * 0.25;
+    }
+    aisleDiyas.current.forEach((diya, idx) => {
+      if (diya) {
+        diya.intensity = 1.3 + Math.sin(t * (10 + idx * 2.3)) * 0.25 + Math.cos(t * (6 + idx)) * 0.15;
+      }
+    });
+  });
+
+  const pillarZs = [-1.8, -3.8, -5.8, -7.8];
+
+  // Rose petals positions along the aisle floor
+  const petals = [
+    [-0.5, -0.98, -1.2, 0.4],
+    [0.6, -0.98, -1.6, -0.3],
+    [-0.7, -0.98, -2.4, 0.8],
+    [0.45, -0.98, -3.1, -0.6],
+    [-0.35, -0.98, -4.0, 0.2],
+    [0.7, -0.98, -4.8, 1.1],
+    [-0.6, -0.98, -5.6, -0.5],
+    [0.5, -0.98, -6.5, 0.7],
+    [-0.4, -0.98, -7.2, -0.9],
+    [0.65, -0.98, -8.0, 0.3],
+  ];
+
+  return (
+    <group position={[0, 0, 0]}>
+      {/* ── Polished Dark Marble Floor ── */}
+      <mesh position={[0, -1.02, -5.2]} receiveShadow>
+        <boxGeometry args={[7.2, 0.04, 11]} />
+        <meshStandardMaterial color="#1E070F" roughness={0.35} metalness={0.2} />
+      </mesh>
+
+      {/* ── Royal Velvet Red Runner Carpet ── */}
+      <mesh position={[0, -0.99, -5.2]} receiveShadow>
+        <boxGeometry args={[1.76, 0.02, 11]} />
+        <meshStandardMaterial color="#730C20" roughness={0.75} metalness={0.12} />
+      </mesh>
+
+      {/* Carpet Gold Trim (Left) */}
+      <mesh position={[-0.88, -0.985, -5.2]}>
+        <boxGeometry args={[0.06, 0.025, 11]} />
+        <meshStandardMaterial color="#D4AF65" metalness={0.92} roughness={0.2} />
+      </mesh>
+
+      {/* Carpet Gold Trim (Right) */}
+      <mesh position={[0.88, -0.985, -5.2]}>
+        <boxGeometry args={[0.06, 0.025, 11]} />
+        <meshStandardMaterial color="#D4AF65" metalness={0.92} roughness={0.2} />
+      </mesh>
+
+      {/* ── Scattered Rose Petals on Floor ── */}
+      {petals.map(([px, py, pz, rot], i) => (
+        <mesh key={i} position={[px, py, pz]} rotation={[-Math.PI / 2, 0, rot]}>
+          <planeGeometry args={[0.09, 0.06]} />
+          <meshStandardMaterial color={i % 2 === 0 ? "#D94E6A" : "#F27896"} roughness={0.6} side={THREE.DoubleSide} />
+        </mesh>
+      ))}
+
+      {/* ── Flanking Royal Pillars & Diya Lamps ── */}
+      {pillarZs.map((pz, idx) => (
+        <group key={idx}>
+          {/* Left Pillar */}
+          <group position={[-1.65, 0.7, pz]}>
+            {/* Square base plinth */}
+            <mesh position={[0, -1.55, 0]} castShadow>
+              <boxGeometry args={[0.42, 0.35, 0.42]} />
+              <meshStandardMaterial color="#B8962E" metalness={0.85} roughness={0.25} />
+            </mesh>
+            {/* Fluted column shaft */}
+            <mesh position={[0, 0.25, 0]} castShadow>
+              <cylinderGeometry args={[0.16, 0.18, 3.3, 16]} />
+              <meshStandardMaterial color="#FFF7EE" roughness={0.3} metalness={0.08} />
+            </mesh>
+            {/* Gold decorative rings */}
+            <mesh position={[0, -0.6, 0]}>
+              <torusGeometry args={[0.2, 0.03, 12, 20]} />
+              <meshStandardMaterial color="#D4AF65" metalness={0.92} roughness={0.18} />
+            </mesh>
+            <mesh position={[0, 1.1, 0]}>
+              <torusGeometry args={[0.2, 0.03, 12, 20]} />
+              <meshStandardMaterial color="#D4AF65" metalness={0.92} roughness={0.18} />
+            </mesh>
+            {/* Ornate capital */}
+            <mesh position={[0, 1.95, 0]} castShadow>
+              <boxGeometry args={[0.44, 0.3, 0.44]} />
+              <meshStandardMaterial color="#C9A84C" metalness={0.88} roughness={0.22} />
+            </mesh>
+            {/* Base Diya Lamp */}
+            <group position={[0.28, -1.35, 0.2]}>
+              <mesh>
+                <cylinderGeometry args={[0.09, 0.04, 0.06, 12]} />
+                <meshStandardMaterial color="#C9A84C" metalness={0.92} roughness={0.2} />
+              </mesh>
+              <pointLight
+                ref={(el) => (aisleDiyas.current[idx * 2] = el)}
+                position={[0, 0.1, 0]}
+                color="#FFA433"
+                intensity={1.3}
+                distance={3.2}
+                decay={2}
+              />
+            </group>
+          </group>
+
+          {/* Right Pillar */}
+          <group position={[1.65, 0.7, pz]}>
+            {/* Square base plinth */}
+            <mesh position={[0, -1.55, 0]} castShadow>
+              <boxGeometry args={[0.42, 0.35, 0.42]} />
+              <meshStandardMaterial color="#B8962E" metalness={0.85} roughness={0.25} />
+            </mesh>
+            {/* Fluted column shaft */}
+            <mesh position={[0, 0.25, 0]} castShadow>
+              <cylinderGeometry args={[0.16, 0.18, 3.3, 16]} />
+              <meshStandardMaterial color="#FFF7EE" roughness={0.3} metalness={0.08} />
+            </mesh>
+            {/* Gold decorative rings */}
+            <mesh position={[0, -0.6, 0]}>
+              <torusGeometry args={[0.2, 0.03, 12, 20]} />
+              <meshStandardMaterial color="#D4AF65" metalness={0.92} roughness={0.18} />
+            </mesh>
+            <mesh position={[0, 1.1, 0]}>
+              <torusGeometry args={[0.2, 0.03, 12, 20]} />
+              <meshStandardMaterial color="#D4AF65" metalness={0.92} roughness={0.18} />
+            </mesh>
+            {/* Ornate capital */}
+            <mesh position={[0, 1.95, 0]} castShadow>
+              <boxGeometry args={[0.44, 0.3, 0.44]} />
+              <meshStandardMaterial color="#C9A84C" metalness={0.88} roughness={0.22} />
+            </mesh>
+            {/* Base Diya Lamp */}
+            <group position={[-0.28, -1.35, 0.2]}>
+              <mesh>
+                <cylinderGeometry args={[0.09, 0.04, 0.06, 12]} />
+                <meshStandardMaterial color="#C9A84C" metalness={0.92} roughness={0.2} />
+              </mesh>
+              <pointLight
+                ref={(el) => (aisleDiyas.current[idx * 2 + 1] = el)}
+                position={[0, 0.1, 0]}
+                color="#FFA433"
+                intensity={1.3}
+                distance={3.2}
+                decay={2}
+              />
+            </group>
+          </group>
+
+          {/* Overhead Floral Garland Arch Spanning Pillars */}
+          <group position={[0, 2.5, pz]}>
+            <mesh>
+              <torusGeometry args={[1.65, 0.04, 8, 24, Math.PI]} />
+              <meshStandardMaterial color="#E8A0A0" roughness={0.7} />
+            </mesh>
+            {/* Golden toran tassels */}
+            {[-1.0, -0.5, 0, 0.5, 1.0].map((tx, ti) => (
+              <mesh key={ti} position={[tx, -0.15, 0]}>
+                <coneGeometry args={[0.035, 0.16, 8]} />
+                <meshStandardMaterial color="#D4AF65" metalness={0.9} roughness={0.2} />
+              </mesh>
+            ))}
+          </group>
+        </group>
+      ))}
+
+      {/* ── Center Overhead Royal Chandelier ── */}
+      <group position={[0, 2.35, -4.5]}>
+        <mesh position={[0, 0.45, 0]}>
+          <cylinderGeometry args={[0.015, 0.015, 0.9, 8]} />
+          <meshStandardMaterial color="#C9A84C" metalness={0.92} roughness={0.18} />
+        </mesh>
+        <mesh castShadow>
+          <octahedronGeometry args={[0.26, 0]} />
+          <meshStandardMaterial color="#FFF1C2" metalness={0.95} roughness={0.1} />
+        </mesh>
+        <mesh>
+          <torusGeometry args={[0.32, 0.02, 8, 20]} />
+          <meshStandardMaterial color="#C9A84C" metalness={0.9} roughness={0.2} />
+        </mesh>
+        <pointLight
+          ref={chandelierRef}
+          position={[0, -0.1, 0]}
+          color="#FFE5A8"
+          intensity={2.6}
+          distance={8.5}
+          decay={2}
+        />
+      </group>
+
+      {/* ── Distant Glowing Royal Mandap Arch Backdrop ── */}
+      <group position={[0, 0.8, -9.4]}>
+        <mesh position={[0, 0.6, -0.2]}>
+          <planeGeometry args={[7.2, 5.0]} />
+          <meshStandardMaterial color="#2B050E" roughness={0.8} />
+        </mesh>
+        <mesh position={[0, 0.8, 0]}>
+          <torusGeometry args={[2.0, 0.12, 16, 36, Math.PI]} />
+          <meshStandardMaterial color="#F2DCA8" metalness={0.92} roughness={0.16} />
+        </mesh>
+        <pointLight position={[0, 0.9, 0.3]} color="#FF9933" intensity={3.8} distance={11} decay={2} />
+      </group>
+    </group>
+  );
+}
+
 export const PalaceEntrance: React.FC<PalaceEntranceProps> = ({
   onOpen,
   isOpen,
@@ -64,13 +286,8 @@ export const PalaceEntrance: React.FC<PalaceEntranceProps> = ({
       return;
     }
 
-    // Timeline that opens gates and IMMEDIATELY triggers sequential text reveal on completion
-    const tl = gsap.timeline({
-      onComplete: () => {
-        // Gates have reached fully open position: trigger sequential reveal immediately
-        onGatesFullyOpen?.();
-      },
-    });
+    // Timeline that opens gates and triggers card reveal upon camera glide arrival into wedding hall
+    const tl = gsap.timeline();
     tlRef.current = tl;
 
     // Smooth, realistic symmetrical swing outward
@@ -92,6 +309,11 @@ export const PalaceEntrance: React.FC<PalaceEntranceProps> = ({
         },
         0
       );
+
+    // Trigger card reveal at 3.9s when camera reaches the illuminated grand wedding hall aisle
+    tl.call(() => {
+      onGatesFullyOpen?.();
+    }, undefined, 3.9);
 
     return () => {
       tl.kill();
@@ -285,56 +507,76 @@ export const PalaceEntrance: React.FC<PalaceEntranceProps> = ({
           </mesh>
         </group>
       </group>
+
+      {/* ── WEDDING HALL AISLE (Storyboard Step 3: Walkway into illuminated grand wedding hall) ── */}
+      <WeddingHallAisle />
     </group>
   );
 };
 
 /* ─────────────────────────────────────────────────────────────────────
    SCENE 1 HTML OVERLAY
-   REQUIREMENTS:
+   REQUIREMENTS (Storyboard Steps 4 & 5):
    1. Initially, show closed gate with NO invitation text visible.
-   2. Immediately when gates finish opening, begin sequential text reveal.
-   3. Reveal elements ONE BY ONE in exact order:
-      - ॥ श्री गणेशाय नमः ॥
-      - YOU ARE CORDIALLY INVITED
-      - TO THE WEDDING CELEBRATION OF
-      - HARSH PRAJAPATI
-      - &
-      - HIMANSHI PRAJAPATI
-      - Existing wedding date text
-   4. Stagger: ~0.38s between elements (within 0.3–0.5s range).
-   5. Smooth cinematic fade-in and subtle upward movement for each element.
-   6. No conflicting timers or duplicate callbacks.
+   2. After camera glides into the grand wedding hall, card triggers 3D
+      rotating & folding reveal (rotateY: -32deg, rotateX: 6deg, scale: 0.72 -> 1.0).
+   3. Uncropped, centered, responsive invitation card with slender date capsule.
    ──────────────────────────────────────────────────────────────────── */
 interface Scene1OverlayProps {
   isOpen: boolean;
   areGatesFullyOpen: boolean;
   onOpen: () => void;
+  reducedMotion?: boolean;
 }
 
 export const Scene1Overlay: React.FC<Scene1OverlayProps> = ({
   isOpen,
   areGatesFullyOpen,
   onOpen,
+  reducedMotion = false,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!cardRef.current) return;
     if (!areGatesFullyOpen) {
-      gsap.set(cardRef.current, { opacity: 0, scale: 0.94, y: 16 });
+      gsap.set(cardRef.current, {
+        opacity: 0,
+        transform: 'perspective(1200px) rotateY(-32deg) rotateX(6deg) scale(0.72) translateY(24px)',
+      });
       return;
     }
 
-    // Reveal the invitation card immediately and smoothly when gates reach fully open
-    gsap.to(cardRef.current, {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      duration: 0.45,
-      ease: 'power2.out',
-    });
-  }, [areGatesFullyOpen]);
+    // Play auspicious royal chime when card reveals
+    try {
+      royalAudio.playChime(1046.5);
+    } catch {
+      // Audio safety
+    }
+
+    if (reducedMotion) {
+      gsap.set(cardRef.current, {
+        opacity: 1,
+        transform: 'perspective(1200px) rotateY(0deg) rotateX(0deg) scale(1) translateY(0px)',
+      });
+      return;
+    }
+
+    // 3D rotating & folding reveal animation matching Storyboard Step 4
+    gsap.fromTo(
+      cardRef.current,
+      {
+        opacity: 0,
+        transform: 'perspective(1200px) rotateY(-32deg) rotateX(6deg) scale(0.72) translateY(24px)',
+      },
+      {
+        opacity: 1,
+        transform: 'perspective(1200px) rotateY(0deg) rotateX(0deg) scale(1) translateY(0px)',
+        duration: 0.85,
+        ease: 'power3.out',
+      }
+    );
+  }, [areGatesFullyOpen, reducedMotion]);
 
   const invitationCardImg = `${import.meta.env.BASE_URL}images/wedding-invitation-card.jpg`;
 
@@ -354,6 +596,7 @@ export const Scene1Overlay: React.FC<Scene1OverlayProps> = ({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        perspective: '1200px',
       }}
       onClick={() => {
         if (!isOpen) onOpen();
@@ -369,7 +612,7 @@ export const Scene1Overlay: React.FC<Scene1OverlayProps> = ({
         }}
       />
 
-      {/* ── WEDDING INVITATION CARD: Revealed immediately when gates are fully open ── */}
+      {/* ── WEDDING INVITATION CARD: Revealed with 3D rotation when camera enters the hall ── */}
       <div
         ref={cardRef}
         style={{
@@ -383,6 +626,7 @@ export const Scene1Overlay: React.FC<Scene1OverlayProps> = ({
           width: '100%',
           pointerEvents: areGatesFullyOpen ? 'auto' : 'none',
           zIndex: 10,
+          transformStyle: 'preserve-3d',
         }}
       >
         {/* Luxury Royal Card Frame with Gold Border & Ambient Shadow */}
@@ -450,7 +694,7 @@ export const Scene1Overlay: React.FC<Scene1OverlayProps> = ({
               textTransform: 'uppercase',
             }}
           >
-            19 Nov: Home, Sadholi Kadeem • 20 Nov: Shiva Banquet Hall
+            19 Nov: Mandha at Home, Sadholi Kadeem • 20 Nov: Shiva Banquet Hall
           </span>
         </div>
       </div>
